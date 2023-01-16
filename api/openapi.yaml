@@ -1,0 +1,1084 @@
+openapi: 3.0.0
+info:
+  description: "Integrate Neem Wallet APIs into your ecosystem to provide your customer\
+    \ the ability to create wallets, set up a financial PIN, ability to manage their\
+    \ wallets and have on request visibility over their balances."
+  title: Wallet
+  version: 1.0.3
+servers:
+- url: https://api.dev.neem.io/neem
+tags:
+- description: Create your Neem Wallet
+  name: Onboarding
+- description: Deposit into your wallet or withdraw from your wallet easily
+  name: Deposit/ Withdraw
+- description: One place for all your wallet services
+  name: Wallet Services
+paths:
+  /api/v1/wallets/account:
+    post:
+      operationId: createAccount
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: sfsdf=
+        explode: false
+        in: header
+        name: X-Neem-OTP
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  Account:
+                    EndtoEndIdentification: "1000"
+                    UserDetails:
+                      FirstName: Rasheed
+                      LastName: Imran
+                      CNIC: "2317066907439"
+                      CNICIssuanceDate: 2015-11-1
+                      CNICExpiryDate: 2035-11-1
+                      Metadata:
+                        CreationDate: 2022-11-1
+                        CNICPictureFront: data:image/png;base64
+                        CNICPictureBack: data:image/png;base64
+                        Address:
+                          Line1: Apartment 5
+                          Line2: "221B, Baker Street,"
+                          Line3: "London, United Kingdom"
+                        GPSCoordinates:
+                          Latitude: 38.8977
+                          Longtitude: -77.0365
+                        DOB: 2015-11-1
+                      Biometrics:
+                      - Index: "1"
+                        Fingerprint: abcd1==
+                      - Index: "2"
+                        Fingerprint: abcd2==
+                      - Index: "3"
+                        Fingerprint: abcd3==
+                      - Index: "4"
+                        Fingerprint: abcd4==
+                      - Index: "5"
+                        Fingerprint: abcd5==
+                      - Index: "6"
+                        Fingerprint: abcd6==
+                      - Index: "7"
+                        Fingerprint: abcd7==
+                      - Index: "8"
+                        Fingerprint: abcd8==
+                      MobileNumber: "3326499732"
+                      MobileNetwork: Jazz
+                      EmailID: RasheedImran@gmail.com
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  Account:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Account Creation Successful
+                    Type: L1
+                    DateTime: 2019-01-01T06:06:06+00:00
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Create Account
+      tags:
+      - Onboarding
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/login:
+    post:
+      operationId: login
+      parameters:
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  Account:
+                    MobileNumber: null
+                    MPin: null
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  Login:
+                    StatusCode: "101"
+                    StatusMessage: Inquiry Successful
+                    NeemId: T3RwIENsYWlt
+                    Type: L1
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Login
+      tags:
+      - Onboarding
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/account/{walletId}:
+    get:
+      operationId: accountLookup
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: EndToEndIdentification
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: SchemeName
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: header
+        name: X-Neem-CNIC
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  AccountLookup:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Inquiry Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    Identification: "03181095130"
+                    Name: Rasheed Imran
+                    AccountStatus: Active
+                    Type: L1
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Account Lookup
+      tags:
+      - Wallet Services
+      x-accepts: application/json
+  /api/v1/wallets/create-mpin/{walletId}:
+    post:
+      operationId: createMpin
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  CreateMPin:
+                    EndtoEndIdentification: "1000"
+                    SchemeName: Wallet
+                    NewPin: "1234"
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  CreateMPin:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: MPIN Creation Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Create Mpin
+      tags:
+      - Onboarding
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/upgrade/{walletId}:
+    post:
+      operationId: accountUpgrade
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  AccountUpgrade:
+                    EndtoEndIdentification: "1000"
+                    SchemeName: Wallet
+                    UserDetails:
+                      CNIC: "3320255277566"
+                      Biometrics:
+                      - Index: "1"
+                        Fingerprint: abcd1==
+                      - Index: "2"
+                        Fingerprint: abcd2==
+                      - Index: "3"
+                        Fingerprint: abcd3==
+                      - Index: "4"
+                        Fingerprint: abcd4==
+                      - Index: "5"
+                        Fingerprint: abcd5==
+                      - Index: "6"
+                        Fingerprint: abcd6==
+                      - Index: "7"
+                        Fingerprint: abcd7==
+                      - Index: "8"
+                        Fingerprint: abcd8==
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  AccountUpgrade:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Account Upgrade Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Account Upgrade
+      tags:
+      - Wallet Services
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/cash-in/inquiry/{walletId}:
+    get:
+      operationId: cashInInquiry
+      parameters:
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: EndToEndIdentification
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: Amount
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: Currency
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: ExtendedProperties
+        required: false
+        schema:
+          items:
+            type: object
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  CashInInquiry:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Inquiry Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    CommissionAmount: "0.00"
+                    TransactionAmount: "100.00"
+                    TotalAmount: "100.00"
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Cash In Inquiry
+      tags:
+      - Deposit/ Withdraw
+      x-accepts: application/json
+  /api/v1/wallets/cash-in/{walletId}:
+    post:
+      operationId: cashIn
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  CashIn:
+                    EndToEndIdentification: "1000"
+                    InstructedAmount:
+                      Amount: "100.00"
+                      Currency: PKR
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  CashIn:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Cash In Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    CommissionAmount: "0.00"
+                    TransactionAmount: "100.00"
+                    TotalAmount: "100.00"
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Cash In
+      tags:
+      - Deposit/ Withdraw
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/cash-out/inquiry/{walletId}:
+    get:
+      operationId: cashOutInquiry
+      parameters:
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: EndToEndIdentification
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: Amount
+        required: true
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: Currency
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: ExtendedProperties
+        required: false
+        schema:
+          items:
+            type: object
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  CashOutInquiry:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Inquiry Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    CommissionAmount: "0.00"
+                    TransactionAmount: "100.00"
+                    TotalAmount: "100.00"
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Cash Out Inquiry
+      tags:
+      - Deposit/ Withdraw
+      x-accepts: application/json
+  /api/v1/wallets/cash-out/{walletId}:
+    post:
+      operationId: cashOut
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Nonce
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: erfdcd345=
+        explode: false
+        in: header
+        name: X-Neem-OTP-Code
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  CashOut:
+                    EndToEndIdentification: "1000"
+                    InstructedAmount:
+                      Amount: "100.00"
+                      Currency: PKR
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  CashOut:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Cash In Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    CommissionAmount: "0.00"
+                    TransactionAmount: "100.00"
+                    TotalAmount: "100.00"
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Cash Out
+      tags:
+      - Deposit/ Withdraw
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/change-mpin/{walletId}:
+    post:
+      operationId: changeMpin
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: string
+        style: simple
+      - example: erfdcd345=
+        explode: false
+        in: header
+        name: X-Neem-OTP
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  ChangeMPin:
+                    EndtoEndIdentification: "1000"
+                    SchemeName: Wallet
+                    Pin: "1234"
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  ChangeMPin:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: MPIN Change Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Change MPIN
+      tags:
+      - Wallet Services
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/balance/{walletId}:
+    get:
+      operationId: balanceInquiry
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: endToEndIdentification
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: schemeName
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - explode: true
+        in: query
+        name: extendedProperties
+        required: false
+        schema:
+          items:
+            type: object
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                BalanceInquiry:
+                  EndtoEndIdentification: "1000"
+                  StatusCode: "101"
+                  StatusMessage: Inquiry Successful
+                  DateTime: 2019-01-01T06:06:06+00:00
+                  AccountBalance:
+                    Amount: "1500.00"
+                    Currency: PKR
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+          headers:
+            Content-Type:
+              explode: false
+              schema:
+                example: application/json
+                type: string
+              style: simple
+      security:
+      - oAuth: []
+      summary: Balance Inquiry
+      tags:
+      - Wallet Services
+      x-accepts: application/json
+  /api/v1/wallets/transaction-history/{walletId}:
+    get:
+      operationId: transactionHistory
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        explode: false
+        in: header
+        name: X-Neem-ID
+        required: false
+        schema:
+          type: string
+        style: simple
+      - explode: true
+        in: query
+        name: endToEndIdentification
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: query
+        name: schemeName
+        required: false
+        schema:
+          type: integer
+        style: form
+      - explode: true
+        in: path
+        name: walletId
+        required: true
+        schema:
+          type: integer
+        style: simple
+      - explode: true
+        in: query
+        name: fromDate
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: toDate
+        required: false
+        schema:
+          type: string
+        style: form
+      - explode: true
+        in: query
+        name: extendedProperties
+        required: false
+        schema:
+          items:
+            type: object
+          type: array
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  TransactionHistory:
+                    EndtoEndIdentification: "1000"
+                    StatusCode: "101"
+                    StatusMessage: Inquiry Successful
+                    DateTime: 2019-01-01T06:06:06+00:00
+                    Identification: "03290316545"
+                    FromDate: 2022-03-15
+                    ToDate: 2022-07-23
+                    TransactionDetails:
+                    - DateTime: 2019-06-09T06:06:06+00:00
+                      TransactionIdentification: "1001"
+                      CounterParty:
+                        Account: GB10TDIC31456208709163
+                        BankCode: UBL
+                      TransactionInformation: Electricity Bill
+                      TransactionAmount:
+                        Amount: "2000.00"
+                        Currency: PKR
+                      CreditDebitIndicator: DEBIT
+                      BalanceAmount: "12255.00"
+                    - DateTime: 2019-06-09T06:06:06+00:00
+                      TransactionIdentification: "1001"
+                      CounterParty:
+                        Account: GB10TDIC31456208709163
+                        BankCode: UBL
+                      TransactionInformation: Water Bill
+                      TransactionAmount:
+                        Amount: "100.00"
+                        Currency: PKR
+                      CreditDebitIndicator: DEBIT
+                      BalanceAmount: "12255.00"
+                    - DateTime: 2019-06-09T06:06:06+00:00
+                      TransactionIdentification: "1001"
+                      CounterParty:
+                        Account: GB10TDIC31456208709163
+                        BankCode: UBL
+                      TransactionInformation: Mobile Topup
+                      TransactionAmount:
+                        Amount: "200.00"
+                        Currency: PKR
+                      CreditDebitIndicator: DEBIT
+                      BalanceAmount: "12255.00"
+                    - DateTime: 2019-06-09T06:06:06+00:00
+                      TransactionIdentification: "1001"
+                      CounterParty:
+                        Account: GB10TDIC31456208709163
+                        BankCode: UBL
+                      TransactionInformation: Broadband Payment
+                      TransactionAmount:
+                        Amount: "400.00"
+                        Currency: PKR
+                      CreditDebitIndicator: DEBIT
+                      BalanceAmount: "12255.00"
+                    ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+          headers:
+            Content-Type:
+              explode: false
+              schema:
+                example: application/json
+                type: string
+              style: simple
+      security:
+      - oAuth: []
+      summary: Transaction History
+      tags:
+      - Wallet Services
+      x-accepts: application/json
+  /api/v1/wallets/initiate-otp:
+    post:
+      operationId: initiateOtp
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  InitiateOtp:
+                    CNIC: null
+                    MobileNumber: null
+                    DeliveryType: null
+                    TransactionType: null
+                ExtendedProperties: []
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  InitiateOtp:
+                    nonce: "324325"
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Initiate OTP
+      tags:
+      - Wallet Services
+      x-content-type: application/json
+      x-accepts: application/json
+  /api/v1/wallets/validate-otp:
+    post:
+      parameters:
+      - example: 1234
+        explode: false
+        in: header
+        name: X-Neem-Partner-Id
+        required: false
+        schema:
+          type: string
+        style: simple
+      - example: application/json
+        explode: false
+        in: header
+        name: Content-Type
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              example:
+                Data:
+                  ValidateOTP:
+                    nonce: null
+                    otp: null
+              type: object
+      responses:
+        "200":
+          content:
+            application/json:
+              example:
+                Data:
+                  Validate:
+                    status: verified
+                    OTPClaim: T3RwIENsYWlt
+                ExtendedProperties: []
+              schema:
+                type: object
+          description: OK
+      security:
+      - oAuth: []
+      summary: Validate OTP
+      tags:
+      - Wallet Services
+      x-content-type: application/json
+      x-accepts: application/json
+components:
+  schemas: {}
+  securitySchemes:
+    oAuth:
+      description: This API uses OAuth 2 with the client credentials flow.
+      flows:
+        clientCredentials:
+          scopes:
+            email: Email as scope
+          tokenUrl: https://api.dev.neem.io/neem/api/v1/wallets/account/oauth2/token
+      type: oauth2
+
